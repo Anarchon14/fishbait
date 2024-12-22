@@ -1,7 +1,6 @@
 """Webserver for the FISHBAIT web interface."""
 
 from typing import Any
-import os
 
 from flask import Flask, request, make_response
 from werkzeug.exceptions import BadRequest
