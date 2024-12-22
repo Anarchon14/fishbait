@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+
+echo "Linting C++ Files..."
+api/.venv/bin/cpplint --recursive --quiet ai/src ai/tests
+
+echo "Linting Python Files..."
+find api/src -type f -name "*.py" | xargs api/.venv/bin/pylint
+
+echo "Building..."
+docker compose -f docker-compose.dev.yml build ai
+
+echo "Testing..."
+docker run --rm fishbait-ai sh -c "cd /build && ./bin/tests.out"
+
+exit 0

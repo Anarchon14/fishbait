@@ -1,0 +1,79 @@
+name: fishbait
+
+services:
+  ai:
+    build:
+      context: ./ai
+      args:
+        MAX_THREADS: ${MAX_THREADS:-1}
+    image: fishbait-ai
+    volumes:
+      - lib:/libvol
+    command: ["sh", "-c", "cp -r /build/lib /libvol"]
+
+  api:
+    build:
+      context: ./api
+    image: fishbait-api
+    environment:
+      - STRATEGY_LOCATION=/aivol/blueprint_dev.hdf
+      - RELAY_LIB_LOCATION=/libvol/lib/librelay.so
+      - SESSION_TIMEOUT=${SESSION_TIMEOUT:-86400}
+      - PIGEON_EXECUTION_TIMEOUT=${PIGEON_EXECUTION_TIMEOUT:-5}
+    depends_on:
+      ai:
+        condition: service_completed_successfully
+    ports:
+      - "5001:5000"
+    volumes:
+      - lib:/libvol
+      - ./ai/out/ai/mccfr/dev:/aivol
+      - ./api/src:/api/src
+    command: ["/api/entrypoints/api.dev.sh"]
+
+  worker:
+    build:
+      context: ./api
+    image: fishbait-api
+    environment:
+      - STRATEGY_LOCATION=/aivol/blueprint_dev.hdf
+      - RELAY_LIB_LOCATION=/libvol/lib/librelay.so
+      - SESSION_TIMEOUT=${SESSION_TIMEOUT:-86400}
+      - PIGEON_EXECUTION_TIMEOUT=${PIGEON_EXECUTION_TIMEOUT:-5}
+    depends_on:
+      ai:
+        condition: service_completed_successfully
+      redis:
+        condition: service_started
+    user: "1000:1000"
+    volumes:
+      - lib:/libvol
+      - ./ai/out/ai/mccfr/dev:/aivol
+      - ./api/src:/api/src
+    command: ["/api/entrypoints/worker.dev.sh"]
+    restart: always
+
+  app:
+    build:
+      context: ./app
+    image: fishbait-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./app:/app
+      - /app/node_modules
+      - /app/build
+    command: ["yarn", "start"]
+
+  redis:
+    image: redis:7.4.1
+    command:
+      - sh
+      - -c
+      - |
+        redis-server \
+          --maxmemory ${REDIS_MAXMEMORY:-256mb} \
+          --maxmemory-policy volatile-lru
+
+volumes:
+  lib:
