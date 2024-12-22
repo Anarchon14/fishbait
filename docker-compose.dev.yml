@@ -23,6 +23,10 @@ services:
     depends_on:
       ai:
         condition: service_completed_successfully
+      worker:
+        condition: service_started
+      redis:
+        condition: service_started
     ports:
       - "5001:5000"
     volumes:
