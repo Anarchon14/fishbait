@@ -1,7 +1,6 @@
 """Webserver for the FISHBAIT web interface."""
 
 from typing import Any
-import os
 
 from flask import Flask, request, make_response
 from werkzeug.exceptions import BadRequest
@@ -24,8 +23,8 @@ import sessions
 
 app = Flask(__name__)
 log = get_logger(__name__)
-if os.getenv('DD_SERVICE'):
-  datadog.initialize()
+if settings.DD_AGENT_HOST:
+  datadog.initialize(statsd_host=settings.DD_AGENT_HOST)
 
 def handle_api_error(e: ApiError):
   return e.flask_tuple()
