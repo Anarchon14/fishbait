@@ -3,7 +3,6 @@
 import os
 
 import logging
-import ddtrace
 
 if os.getenv('DD_SERVICE'):
   logging.basicConfig(
@@ -27,7 +26,3 @@ else:
 
 def get_logger(name: str):
   return logging.getLogger(name)
-
-@ddtrace.tracer.wrap()
-def hello():
-  get_logger(__name__).info('Hello, World!')

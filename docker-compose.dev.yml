@@ -29,7 +29,7 @@ services:
       - lib:/libvol
       - ./ai/out/ai/mccfr/dev:/aivol
       - ./api/src:/api/src
-    entrypoint: ["/api/entrypoints/api.dev.sh"]
+    command: ["/api/entrypoints/api.dev.sh"]
 
   worker:
     build:
@@ -50,7 +50,7 @@ services:
       - lib:/libvol
       - ./ai/out/ai/mccfr/dev:/aivol
       - ./api/src:/api/src
-    entrypoint: ["/api/entrypoints/worker.dev.sh"]
+    command: ["/api/entrypoints/worker.dev.sh"]
     restart: always
 
   app:
@@ -67,7 +67,7 @@ services:
 
   redis:
     image: redis:7.4.1
-    entrypoint:
+    command:
       - sh
       - -c
       - |
