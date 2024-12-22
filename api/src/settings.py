@@ -19,3 +19,5 @@ CARDS_IN_DECK: int = 52
 
 REDIS_SESSION_DB: int = 0
 REDIS_CELERY_DB: int = 1
+
+DD_AGENT_HOST = os.getenv("DD_AGENT_HOST")
