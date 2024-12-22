@@ -1,16 +1,16 @@
 FROM ubuntu:24.04
 
 RUN apt-get update && \
-    apt-get install -y python3 python3-pip python3.12-venv && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y python3 pipx && \
+    rm -rf /var/lib/apt/lists/* && \
+    pipx install poetry
+
+ENV PATH=/root/.local/bin:$PATH
 
 WORKDIR /api
 
-RUN python3 -m venv venv
-
-# Install dependencies
-COPY requirements.txt .
-RUN venv/bin/pip install --no-cache-dir -r requirements.txt
+COPY pyproject.toml poetry.lock poetry.toml ./
+RUN poetry install --without dev
 
 COPY ./entrypoints ./entrypoints
 RUN chmod +x ./entrypoints/*

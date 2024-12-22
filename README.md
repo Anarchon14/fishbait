@@ -5,13 +5,12 @@ poker. Inspired by the Pluribus poker bot developed by CMU and Facebook.
 
 ## Development Setup
 ```sh
-python -m venv api/venv
-api/venv/bin/pip install -r api/requirements.txt
+poetry install --directory=api
 cp .githooks/pre-push .git/hooks/pre-push
 git submodule update --init --recursive
 cp ai/src/mccfr/hyperparameters.h.dev ai/src/mccfr/hyperparameters.h
 docker compose -f docker-compose.dev.yml build ai
-docker run --rm -v ./ai/out:/build/out fishbait-ai /ai/dev_blueprint.sh
+docker compose -f docker-compose.prod.yml run --rm -v $(pwd)/ai/out:/build/out ai /ai/dev_blueprint.sh
 docker compose -f docker-compose.dev.yml up --build
 ```
 
@@ -32,6 +31,7 @@ docker run --rm fishbait-ai sh -c "cd /build && ./bin/tests.out"
 ## Requirements
 - Docker
 - Python 3.12
+- pipx
 - nginx (to deploy the interface)
 
 ## Other Notes

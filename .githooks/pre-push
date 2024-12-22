@@ -2,10 +2,10 @@
 set -e
 
 echo "Linting C++ Files..."
-api/venv/bin/cpplint --recursive --quiet ai/src ai/tests
+api/.venv/bin/cpplint --recursive --quiet ai/src ai/tests
 
 echo "Linting Python Files..."
-find api/src -type f -name "*.py" | xargs api/venv/bin/pylint
+find api/src -type f -name "*.py" | xargs api/.venv/bin/pylint
 
 echo "Building..."
 docker compose -f docker-compose.dev.yml build ai

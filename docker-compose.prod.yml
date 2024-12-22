@@ -45,7 +45,7 @@ services:
       - lib:/libvol
       - ./api/src:/api/src
       - ${STRATEGY_LOCATION}:/strategy.hdf:ro
-    entrypoint: ["/api/entrypoints/api.prod.sh"]
+    command: ["/api/entrypoints/api.prod.sh"]
     restart: always
 
   worker:
@@ -75,7 +75,7 @@ services:
       - lib:/libvol
       - ./api/src:/api/src
       - ${STRATEGY_LOCATION}:/strategy.hdf:ro
-    entrypoint: ["/api/entrypoints/worker.prod.sh"]
+    command: ["/api/entrypoints/worker.prod.sh"]
     restart: always
 
   app:
@@ -88,7 +88,7 @@ services:
 
   redis:
     image: redis:7.4.1
-    entrypoint:
+    command:
       - sh
       - -c
       - |
